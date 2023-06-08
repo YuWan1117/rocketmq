@@ -1,0 +1,72 @@
+clusterName: "cluster-prod"
+
+image:
+  repository: "apache/rocketmq"
+  tag: "4.9.4"
+
+broker:
+  size:
+    master: 2
+    replica: 1
+
+  config:
+    autoCreateTopicEnable: "false"
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "cbs"
+
+  master:
+    brokerRole: ASYNC_MASTER
+    jvmMemory: " -Xms4g -Xmx4g -Xmn1g "
+    resources:
+      limits:
+        cpu: 4
+        memory: 12Gi
+      requests:
+        cpu: 200m
+        memory: 6Gi
+
+  replica:
+    jvmMemory: " -Xms2g -Xmx2g -Xmn512m "
+    resources:
+      limits:
+        cpu: 4
+        memory: 8Gi
+      requests:
+        cpu: 50m
+        memory: 2Gi
+
+nameserver:
+  replicaCount: 2
+
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 50m
+      memory: 1Gi
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "cbs"
+
+dashboard:
+  enabled: true
+  replicaCount: 1
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    hosts:
+      - host: rocketmq.example.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    #tls:
+    #  - secretName: example-com-tls
+    #    hosts:
+    #      - rocketmq.example.com
